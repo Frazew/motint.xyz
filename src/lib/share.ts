@@ -2,16 +2,24 @@ import { getGuessStatuses } from './statuses'
 import { solutionIndex } from './words'
 import { GAME_TITLE } from '../constants/strings'
 
-export const shareStatus = (
+export const shareStatus = async (
   guesses: string[],
   lost: boolean,
   isHardMode: boolean
 ) => {
-  navigator.clipboard.writeText(
-    `${GAME_TITLE} ${solutionIndex} ${lost ? 'X' : guesses.length}/6${
-      isHardMode ? '*' : ''
-    }\n\n` + generateEmojiGrid(guesses)
-  )
+  const shareText = `${GAME_TITLE} ${solutionIndex} ${lost ? 'X' : guesses.length}/6\n\n` + generateEmojiGrid(guesses)
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: "MotINT",
+        url: "https://motint.xyz",
+        text: shareText
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  navigator.clipboard.writeText(shareText)
 }
 
 export const generateEmojiGrid = (guesses: string[]) => {
@@ -23,11 +31,11 @@ export const generateEmojiGrid = (guesses: string[]) => {
         .map((_, i) => {
           switch (status[i]) {
             case 'correct':
-              return '🟩'
+              return '🟥'
             case 'present':
               return '🟨'
             default:
-              return '⬜'
+              return '🟦'
           }
         })
         .join('')

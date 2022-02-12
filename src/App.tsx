@@ -3,8 +3,6 @@ import {
   ChartBarIcon,
   SunIcon,
   MoonIcon,
-  CakeIcon,
-  AcademicCapIcon,
 } from '@heroicons/react/outline'
 import { useState, useEffect } from 'react'
 import { Alert } from './components/alerts/Alert'
@@ -14,7 +12,6 @@ import { AboutModal } from './components/modals/AboutModal'
 import { InfoModal } from './components/modals/InfoModal'
 import { StatsModal } from './components/modals/StatsModal'
 import {
-  GAME_TITLE,
   WIN_MESSAGES,
   GAME_COPIED_MESSAGE,
   ABOUT_GAME_MESSAGE,
@@ -33,7 +30,6 @@ import {
   isWordInWordList,
   isWinningWord,
   solution,
-  findFirstUnusedReveal,
 } from './lib/words'
 import { addStatsForCompletedGame, loadStats } from './lib/stats'
 import {
@@ -82,16 +78,6 @@ function App() {
 
   const [stats, setStats] = useState(() => loadStats())
 
-  const [isHardMode, setIsHardMode] = useState(
-    localStorage.getItem('gameMode')
-      ? localStorage.getItem('gameMode') === 'hard'
-      : false
-  )
-
-  const [isMissingPreviousLetters, setIsMissingPreviousLetters] =
-    useState(false)
-  const [missingLetterMessage, setIsMissingLetterMessage] = useState('')
-
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add('dark')
@@ -103,11 +89,6 @@ function App() {
   const handleDarkMode = (isDark: boolean) => {
     setIsDarkMode(isDark)
     localStorage.setItem('theme', isDark ? 'dark' : 'light')
-  }
-
-  const handleHardMode = (isHard: boolean) => {
-    setIsHardMode(isHard)
-    localStorage.setItem('gameMode', isHard ? 'hard' : 'normal')
   }
 
   useEffect(() => {
@@ -166,18 +147,6 @@ function App() {
       }, ALERT_TIME_MS)
     }
 
-    // enforce hard mode - all guesses must contain all previously revealed letters
-    if (isHardMode) {
-      const firstMissingReveal = findFirstUnusedReveal(currentGuess, guesses)
-      if (firstMissingReveal) {
-        setIsMissingLetterMessage(firstMissingReveal)
-        setIsMissingPreviousLetters(true)
-        return setTimeout(() => {
-          setIsMissingPreviousLetters(false)
-        }, ALERT_TIME_MS)
-      }
-    }
-
     setIsRevealing(true)
     // turn this back off after all
     // chars have been revealed
@@ -209,41 +178,7 @@ function App() {
 
   return (
     <div className="pt-2 pb-8 max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <div className="flex w-80 mx-auto items-center mb-8 mt-20">
-        <h1 className="text-xl ml-2.5 grow font-bold dark:text-white">
-          {GAME_TITLE}
-        </h1>
-        {isHardMode ? (
-          <AcademicCapIcon
-            className="h-6 w-6 mr-2 cursor-pointer dark:stroke-white"
-            onClick={() => handleHardMode(!isHardMode)}
-          />
-        ) : (
-          <CakeIcon
-            className="h-6 w-6 mr-2 cursor-pointer dark:stroke-white"
-            onClick={() => handleHardMode(!isHardMode)}
-          />
-        )}
-        {isDarkMode ? (
-          <SunIcon
-            className="h-6 w-6 mr-2 cursor-pointer dark:stroke-white"
-            onClick={() => handleDarkMode(!isDarkMode)}
-          />
-        ) : (
-          <MoonIcon
-            className="h-6 w-6 mr-2 cursor-pointer"
-            onClick={() => handleDarkMode(!isDarkMode)}
-          />
-        )}
-        <InformationCircleIcon
-          className="h-6 w-6 mr-2 cursor-pointer dark:stroke-white"
-          onClick={() => setIsInfoModalOpen(true)}
-        />
-        <ChartBarIcon
-          className="h-6 w-6 mr-3 cursor-pointer dark:stroke-white"
-          onClick={() => setIsStatsModalOpen(true)}
-        />
-      </div>
+      <img className="mx-auto w-60 pb-8 pt-8" src={process.env.PUBLIC_URL + '/motint.png'} alt="logo motint"/>
       <Grid
         guesses={guesses}
         currentGuess={currentGuess}
@@ -271,13 +206,33 @@ function App() {
           setSuccessAlert(GAME_COPIED_MESSAGE)
           return setTimeout(() => setSuccessAlert(''), ALERT_TIME_MS)
         }}
-        isHardMode={isHardMode}
+        isHardMode={false}
       />
       <AboutModal
         isOpen={isAboutModalOpen}
         handleClose={() => setIsAboutModalOpen(false)}
       />
-
+      <div className="flex mx-auto items-center justify-center mb-8 mt-20">
+        {isDarkMode ? (
+          <SunIcon
+            className="h-6 w-6 mr-2 cursor-pointer dark:stroke-white"
+            onClick={() => handleDarkMode(!isDarkMode)}
+          />
+        ) : (
+          <MoonIcon
+            className="h-6 w-6 mr-2 cursor-pointer"
+            onClick={() => handleDarkMode(!isDarkMode)}
+          />
+        )}
+        <InformationCircleIcon
+          className="h-6 w-6 mr-2 cursor-pointer dark:stroke-white"
+          onClick={() => setIsInfoModalOpen(true)}
+        />
+        <ChartBarIcon
+          className="h-6 w-6 cursor-pointer dark:stroke-white"
+          onClick={() => setIsStatsModalOpen(true)}
+        />
+      </div>
       <button
         type="button"
         className="mx-auto mt-8 flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 select-none"
@@ -291,7 +246,6 @@ function App() {
         message={WORD_NOT_FOUND_MESSAGE}
         isOpen={isWordNotFoundAlertOpen}
       />
-      <Alert message={missingLetterMessage} isOpen={isMissingPreviousLetters} />
       <Alert
         message={CORRECT_WORD_MESSAGE(solution)}
         isOpen={isGameLost && !isRevealing}

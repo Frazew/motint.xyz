@@ -26,10 +26,10 @@ export const Key = ({
     'flex items-center justify-center rounded mx-0.5 text-xs font-bold cursor-pointer select-none dark:text-white',
     {
       'transition ease-in-out': isRevealing,
-      'bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 active:bg-slate-400':
+      'bg-sky-400 dark:bg-sky-600 hover:bg-sky-300 active:bg-sky-400 text-white':
         !status,
-      'bg-slate-400 dark:bg-slate-800 text-white': status === 'absent',
-      'bg-green-500 hover:bg-green-600 active:bg-green-700 text-white':
+      'bg-sky-200 dark:bg-sky-800': status === 'absent',
+      'bg-rose-500 hover:bg-rose-600 active:bg-rose-700 text-white':
         status === 'correct',
       'bg-yellow-500 hover:bg-yellow-600 active:bg-yellow-700 text-white':
         status === 'present',
