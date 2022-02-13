@@ -1,4 +1,4 @@
-import { MAX_CHALLENGES } from '../constants/settings'
+import { max_challenges } from './words'
 import {
   GameStats,
   loadStatsFromLocalStorage,
@@ -16,7 +16,7 @@ export const addStatsForCompletedGame = (
 
   stats.totalGames += 1
 
-  if (count >= MAX_CHALLENGES) {
+  if (count >= max_challenges) {
     // A fail situation
     stats.currentStreak = 0
     stats.gamesFailed += 1
@@ -36,7 +36,7 @@ export const addStatsForCompletedGame = (
 }
 
 const defaultStats: GameStats = {
-  winDistribution: Array.from(new Array(MAX_CHALLENGES), () => 0),
+  winDistribution: Array.from(new Array(max_challenges), () => 0),
   gamesFailed: 0,
   currentStreak: 0,
   bestStreak: 0,

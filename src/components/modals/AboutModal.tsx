@@ -7,15 +7,15 @@ type Props = {
 
 export const AboutModal = ({ isOpen, handleClose }: Props) => {
   return (
-    <BaseModal title="About" isOpen={isOpen} handleClose={handleClose}>
+    <BaseModal title="À propos" isOpen={isOpen} handleClose={handleClose}>
       <p className="text-sm text-gray-500 dark:text-gray-300">
-        This is an open source version of the word guessing game we all know and
-        love -{' '}
+        Basé sur react-***REMOVED*** avec pas mal de petites modifs.
+        Déployé chez Scaleway avec Terraform -{' '}
         <a
-          href="https://github.com/cwackerfuss/react-***REMOVED***"
+          href="https://github.com/Frazew/motint.xyz"
           className="underline font-bold"
         >
-          check out the code here
+          le code est dispo ici
         </a>{' '}
       </p>
     </BaseModal>

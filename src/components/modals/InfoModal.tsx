@@ -1,9 +1,9 @@
 import { Cell } from '../grid/Cell'
 import { BaseModal } from './BaseModal'
 import {
-  MAX_WORD_LENGTH,
-  MAX_CHALLENGES
-} from '../../constants/settings'
+  max_challenges,
+  word_length
+} from '../../lib/words'
 
 type Props = {
   isOpen: boolean
@@ -14,7 +14,7 @@ export const InfoModal = ({ isOpen, handleClose }: Props) => {
   return (
     <BaseModal title="Comment jouer" isOpen={isOpen} handleClose={handleClose}>
       <p className="text-sm text-gray-500 dark:text-gray-300">
-        Honnêtement c'est pas compliqué: il faut deviner un mot de {MAX_WORD_LENGTH} lettres en {MAX_CHALLENGES} essais ou moins.
+        Honnêtement c'est pas compliqué: il faut deviner un mot de {word_length} lettres en {max_challenges} essais ou moins.
       </p>
       <p className="text-sm text-gray-500 dark:text-gray-300">
         La couleur de la lettre après validation donne un peu plus d'informations sur le mot.

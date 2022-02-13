@@ -11,9 +11,8 @@ export const shareStatus = async (
   if (navigator.share) {
     try {
       await navigator.share({
-        title: "MotINT",
+        text: generateEmojiGrid(guesses) + "\nmotint.xyz",
         url: "https://motint.xyz",
-        text: shareText
       })
     } catch (error) {
       console.log(error)

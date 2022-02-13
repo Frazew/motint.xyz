@@ -20,16 +20,15 @@ import {
   CORRECT_WORD_MESSAGE,
 } from './constants/strings'
 import {
-  MAX_WORD_LENGTH,
-  MAX_CHALLENGES,
   ALERT_TIME_MS,
   REVEAL_TIME_MS,
-  GAME_LOST_INFO_DELAY,
 } from './constants/settings'
 import {
   isWordInWordList,
   isWinningWord,
   solution,
+  word_length,
+  max_challenges,
 } from './lib/words'
 import { addStatsForCompletedGame, loadStats } from './lib/stats'
 import {
@@ -63,14 +62,14 @@ function App() {
   const [isRevealing, setIsRevealing] = useState(false)
   const [guesses, setGuesses] = useState<string[]>(() => {
     const loaded = loadGameStateFromLocalStorage()
-    if (loaded?.solution !== solution) {
+    if (loaded?.solution !== solution || loaded === null) {
       return []
     }
     const gameWasWon = loaded.guesses.includes(solution)
     if (gameWasWon) {
       setIsGameWon(true)
     }
-    if (loaded.guesses.length === MAX_CHALLENGES && !gameWasWon) {
+    if (loaded.guesses.length === max_challenges && !gameWasWon) {
       setIsGameLost(true)
     }
     return loaded.guesses
@@ -106,19 +105,19 @@ function App() {
           setSuccessAlert('')
           setIsStatsModalOpen(true)
         }, ALERT_TIME_MS)
-      }, REVEAL_TIME_MS * MAX_WORD_LENGTH)
+      }, REVEAL_TIME_MS * word_length)
     }
     if (isGameLost) {
       setTimeout(() => {
         setIsStatsModalOpen(true)
-      }, GAME_LOST_INFO_DELAY)
+      }, (word_length + 1) * REVEAL_TIME_MS)
     }
   }, [isGameWon, isGameLost])
 
   const onChar = (value: string) => {
     if (
-      currentGuess.length < MAX_WORD_LENGTH &&
-      guesses.length < MAX_CHALLENGES &&
+      currentGuess.length < word_length &&
+      guesses.length < max_challenges &&
       !isGameWon
     ) {
       setCurrentGuess(`${currentGuess}${value}`)
@@ -133,14 +132,14 @@ function App() {
     if (isGameWon || isGameLost) {
       return
     }
-    if (!(currentGuess.length === MAX_WORD_LENGTH)) {
+    if (!(currentGuess.length === word_length)) {
       setIsNotEnoughLetters(true)
       return setTimeout(() => {
         setIsNotEnoughLetters(false)
       }, ALERT_TIME_MS)
     }
 
-    if (!isWordInWordList(currentGuess)) {
+    if (!isWordInWordList(currentGuess, word_length)) {
       setIsWordNotFoundAlertOpen(true)
       return setTimeout(() => {
         setIsWordNotFoundAlertOpen(false)
@@ -152,13 +151,13 @@ function App() {
     // chars have been revealed
     setTimeout(() => {
       setIsRevealing(false)
-    }, REVEAL_TIME_MS * MAX_WORD_LENGTH)
+    }, REVEAL_TIME_MS * word_length)
 
     const winningWord = isWinningWord(currentGuess)
 
     if (
-      currentGuess.length === MAX_WORD_LENGTH &&
-      guesses.length < MAX_CHALLENGES &&
+      currentGuess.length === word_length &&
+      guesses.length < max_challenges &&
       !isGameWon
     ) {
       setGuesses([...guesses, currentGuess])
@@ -169,7 +168,7 @@ function App() {
         return setIsGameWon(true)
       }
 
-      if (guesses.length === MAX_CHALLENGES - 1) {
+      if (guesses.length === max_challenges - 1) {
         setStats(addStatsForCompletedGame(stats, guesses.length + 1))
         setIsGameLost(true)
       }

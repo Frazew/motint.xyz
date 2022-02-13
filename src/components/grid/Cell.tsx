@@ -40,7 +40,7 @@ export const Cell = ({
 
   const shouldDisplayDot = status === 'present'
   const dotClasses = classnames(
-    'rounded-full bg-yellow-500 h-12 w-12 absolute -z-10 ease-in-out',
+    'rounded-full bg-yellow-500 h-10 w-10 absolute -z-10 ease-in-out',
     {
       'dot-reveal-animation': shouldDisplayDot && shouldReveal,
       'invisible': !shouldDisplayDot

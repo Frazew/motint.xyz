@@ -2,10 +2,12 @@ import { WORDS } from '../constants/wordlist'
 import { VALID_GUESSES } from '../constants/validGuesses'
 import { getGuessStatuses } from './statuses'
 
-export const isWordInWordList = (word: string) => {
+export const isWordInWordList = (word: string, length: number) => {
+  const guess_length = word.toLowerCase().length
   return (
-    WORDS.includes(word.toLowerCase()) ||
-    VALID_GUESSES.includes(word.toLowerCase())
+    WORDS[length - 3].includes(word.toLowerCase()) ||
+    VALID_GUESSES.includes(word.toLowerCase()) ||
+    (word.toLowerCase().substring(guess_length - 1) === "s" && VALID_GUESSES.includes(word.toLowerCase().substring(0, guess_length - 1)))
   )
 }
 
@@ -40,18 +42,20 @@ export const findFirstUnusedReveal = (word: string, guesses: string[]) => {
 }
 
 export const getWordOfDay = () => {
-  // January 1, 2022 Game Epoch
-  const epochMs = new Date('January 1, 2022 00:00:00').valueOf()
+  const epochMs = new Date('February 13, 2022 00:00:00').valueOf()
   const now = Date.now()
-  const msInDay = 86400000
+  const msInDay = 86400000 / 4
   const index = Math.floor((now - epochMs) / msInDay)
   const nextday = (index + 1) * msInDay + epochMs
+  const lengthIndex = (Math.floor((now - epochMs) / msInDay) * 2) % WORDS.length
 
   return {
-    solution: WORDS[index % WORDS.length].toUpperCase(),
+    solution: WORDS[lengthIndex][index % WORDS[lengthIndex].length].toUpperCase(),
     solutionIndex: index,
     tomorrow: nextday,
+    word_length: 3 + lengthIndex,
+    max_challenges: Math.min(3 + lengthIndex + 1, 8)
   }
 }
 
-export const { solution, solutionIndex, tomorrow } = getWordOfDay()
+export const { solution, solutionIndex, tomorrow, word_length, max_challenges } = getWordOfDay()
