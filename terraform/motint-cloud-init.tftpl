@@ -1,0 +1,41 @@
+#cloud-config
+
+
+# Install docker
+packages:
+  - docker.io
+
+# Create the docker group
+groups:
+  - docker
+
+# Add default auto created user to docker group
+system_info:
+  default_user:
+    groups: [docker]
+
+write_files:
+- encoding: b64
+  content: ${traefik_motint_config}
+  owner: root:root
+  path: /etc/traefik/providers/motint.toml
+  permissions: '0644'
+- encoding: b64
+  content: ${traefik_config}
+  owner: root:root
+  path: /etc/traefik/traefik.toml
+  permissions: '0644'
+- encoding: b64
+  content: ${motint_tls_cert}
+  owner: root:root
+  path: /etc/certs/motint.xyz/fullchain.pem
+  permissions: '0644'
+- encoding: b64
+  content: ${motint_tls_key}
+  owner: root:root
+  path: /etc/certs/motint.xyz/privkey.pem
+  permissions: '0644'
+
+# Run
+runcmd:
+ - /usr/bin/docker run -v /etc/traefik:/etc/traefik -v /etc/certs/motint.xyz:/etc/certs/motint.xyz -d -p 80:80 -p 443:443 --restart=always traefik:rocamadour

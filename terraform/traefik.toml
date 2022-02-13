@@ -1,0 +1,16 @@
+[entryPoints]
+  [entryPoints.websecure]
+    address = ":443"
+
+[entryPoints.web]
+  address = ":80"
+
+  [entryPoints.web.http]
+    [entryPoints.web.http.redirections]
+      [entryPoints.web.http.redirections.entryPoint]
+        to = "websecure"
+        scheme = "https"
+
+[providers]
+  [providers.file]
+    directory = "/etc/traefik/providers/"

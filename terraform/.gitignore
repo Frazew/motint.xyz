@@ -1,0 +1,6 @@
+certs/
+env.sh
+.terraform/*
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup

@@ -1,0 +1,32 @@
+[http]
+[http.services]
+  [http.services.motint.loadBalancer]
+    passHostHeader = false
+    [[http.services.motint.loadBalancer.servers]]
+      url = "${bucket_endpoint}"
+
+[http.middlewares]
+  [http.middlewares.redirect-index.replacePath]
+    path = "/index.html"
+
+  [http.middlewares.compress.compress]
+
+[http.routers]
+  [http.routers.motint-noindex]
+    entryPoints = ["websecure"]
+    rule = "Host(`motint.xyz`, `www.motint.xyz`) && Path(`/`)"
+    service = "motint"
+    middlewares = ["redirect-index", "compress"]
+    [http.routers.motint-noindex.tls]
+
+  [http.routers.motint]
+    entryPoints = ["websecure"]
+    rule = "Host(`motint.xyz`, `www.motint.xyz`)"
+    middlewares = ["compress"]
+    service = "motint"
+    [http.routers.motint.tls]
+
+[tls]
+[[tls.certificates]]
+   certFile = "/etc/certs/motint.xyz/fullchain.pem"
+   keyFile = "/etc/certs/motint.xyz/privkey.pem"
