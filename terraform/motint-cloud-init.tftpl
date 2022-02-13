@@ -4,6 +4,7 @@
 # Install docker
 packages:
   - docker.io
+  - curl
 
 # Create the docker group
 groups:
@@ -35,7 +36,34 @@ write_files:
   owner: root:root
   path: /etc/certs/motint.xyz/privkey.pem
   permissions: '0644'
+- encoding: b64
+  content: ${compose_file}
+  owner: root:root
+  path: /opt/docker-compose.yml
+  permissions: '0644'
+- encoding: b64
+  content: ${prometheus_config}
+  owner: root:root
+  path: /opt/prometheus.yml
+  permissions: '0644'
+- encoding: b64
+  content: ${grafana_config}
+  owner: root:root
+  path: /opt/grafana-datasource.yml
+  permissions: '0644'
+- encoding: b64
+  content: ${reverse_proxy_dashboard}
+  owner: root:root
+  path: /opt/reverse-proxy_rev1.json
+  permissions: '0644'
+- encoding: b64
+  content: ${grafana_dashboard}
+  owner: root:root
+  path: /opt/dashboard.yml
+  permissions: '0644'
 
 # Run
 runcmd:
- - /usr/bin/docker run -v /etc/traefik:/etc/traefik -v /etc/certs/motint.xyz:/etc/certs/motint.xyz -d -p 80:80 -p 443:443 --restart=always traefik:rocamadour
+ - curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+ - chmod +x /usr/local/bin/docker-compose
+ - /usr/local/bin/docker-compose -f /opt/docker-compose.yml up -d

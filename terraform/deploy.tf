@@ -49,7 +49,7 @@ resource "null_resource" "static" {
     always_run = "${timestamp()}"
   }
   provisioner "local-exec" {
-    command = "docker build . -t builder && docker run --rm --name builder -v \"$(pwd)/dist:/app/build\" builder && rclone sync --s3-provider Scaleway --s3-region fr-par --s3-env-auth --s3-endpoint s3.fr-par.scw.cloud --s3-acl public-read --s3-storage-class STANDARD ${path.module}/dist :s3:${scaleway_object_bucket.static.name}"
+    command = "docker build .. -t builder && docker run --rm --name builder -v \"$(pwd)/dist:/app/build\" builder && rclone sync --s3-provider Scaleway --s3-region fr-par --s3-env-auth --s3-endpoint s3.fr-par.scw.cloud --s3-acl public-read --s3-storage-class STANDARD ${path.module}/dist :s3:${scaleway_object_bucket.static.name}"
     interpreter = ["bash", "-c"]
   }
 }
@@ -67,7 +67,12 @@ resource "scaleway_instance_server" "gateway" {
     cloud-init = templatefile("${path.module}/motint-cloud-init.tftpl", {
       motint_tls_key = base64encode(file("certs/archive/motint.xyz/privkey1.pem"))
       motint_tls_cert = base64encode(file("certs/archive/motint.xyz/fullchain1.pem"))
+      compose_file = base64encode(file("docker-compose.yml"))
       traefik_config = base64encode(file("traefik.toml"))
+      prometheus_config = base64encode(file("prometheus.yml"))
+      grafana_config = base64encode(file("datasource.yml"))
+      reverse_proxy_dashboard = base64encode(file("reverse-proxy_rev1.json"))
+      grafana_dashboard = base64encode(file("dashboard.yml"))
       traefik_motint_config = base64encode(templatefile("traefik_motint.tftpl", { bucket_endpoint = scaleway_object_bucket.static.endpoint }))
     })
   }
@@ -97,6 +102,7 @@ resource "scaleway_domain_record" "gateway_AAAA" {
 
 resource "scaleway_domain_record" "www_CNAME" {
   dns_zone = var.dns_zone
+  keep_empty_zone = true
   name     = "www"
   type     = "CNAME"
   data     = "motint.xyz."

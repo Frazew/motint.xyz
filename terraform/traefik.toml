@@ -2,6 +2,13 @@
   [entryPoints.websecure]
     address = ":443"
 
+  [entryPoints.metrics]
+    address = ":8080"
+
+[metrics]
+  [metrics.prometheus]
+    entryPoint = "metrics"
+
 [entryPoints.web]
   address = ":80"
 
