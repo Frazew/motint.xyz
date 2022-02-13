@@ -4,3 +4,4 @@ env.sh
 .terraform.lock.hcl
 *.tfstate
 *.tfstate.backup
+dist/

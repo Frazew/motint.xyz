@@ -64,16 +64,16 @@ resource "scaleway_instance_server" "gateway" {
   ip_id = scaleway_instance_ip.gateway_ip.id
 
   user_data = {
-    cloud-init = templatefile("${path.module}/motint-cloud-init.tftpl", {
+    cloud-init = templatefile("${path.module}/files/motint-cloud-init.tftpl", {
       motint_tls_key = base64encode(file("certs/archive/motint.xyz/privkey1.pem"))
       motint_tls_cert = base64encode(file("certs/archive/motint.xyz/fullchain1.pem"))
-      compose_file = base64encode(file("docker-compose.yml"))
-      traefik_config = base64encode(file("traefik.toml"))
-      prometheus_config = base64encode(file("prometheus.yml"))
-      grafana_config = base64encode(file("datasource.yml"))
-      reverse_proxy_dashboard = base64encode(file("reverse-proxy_rev1.json"))
-      grafana_dashboard = base64encode(file("dashboard.yml"))
-      traefik_motint_config = base64encode(templatefile("traefik_motint.tftpl", { bucket_endpoint = scaleway_object_bucket.static.endpoint }))
+      compose_file = base64encode(file("${path.module}/files/docker-compose.yml"))
+      traefik_config = base64encode(file("${path.module}/files/traefik.toml"))
+      prometheus_config = base64encode(file("${path.module}/files/prometheus.yml"))
+      grafana_config = base64encode(file("${path.module}/files/datasource.yml"))
+      reverse_proxy_dashboard = base64encode(file("${path.module}/files/reverse-proxy_rev1.json"))
+      grafana_dashboard = base64encode(file("${path.module}/files/dashboard.yml"))
+      traefik_motint_config = base64encode(templatefile("${path.module}/files/traefik_motint.tftpl", { bucket_endpoint = scaleway_object_bucket.static.endpoint }))
     })
   }
 
