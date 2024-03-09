@@ -1,7 +1,7 @@
 # MotINT
 
-Une adaptation du ***REMOVED*** / Motus, pour l'INT, basée sur [react-***REMOVED***](https://github.com/cwackerfuss/react-***REMOVED***).
-
+Une adaptation de Motus / d'un certain jeu racheté par le NYT et dont on ne doit pas prononcer le nom parce que c'est des abrutis qui DMCA, pour l'INT, basée sur une implémentation open source en React qui a été DMCA
+ 
 ## Configuration
 
 L'utilisation via Terraform nécessite de déclarer quelques variables d'environnement simples, dans `terraform/env.sh` par exemple:
